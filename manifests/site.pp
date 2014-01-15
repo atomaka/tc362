@@ -28,6 +28,7 @@ package { 'zsh': }
 
 # CLASSES
 include augeas
+include sudo
 
 class { 'ssh::server':
   require => Class['augeas'],
@@ -38,6 +39,11 @@ class { 'apache': }
 ssh::server::configline { 'PermitRootLogin': value => 'no' }
 ssh::server::configline { 'PasswordAuthentication': value => 'no' }
 ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
+
+sudo::conf { 'sudo':
+  priority => 10,
+  content  => "%sudo ALL=(ALL) NOPASSWD: ALL\n",
+}
 
 # FILES
 file { '/var/www/index.html':
