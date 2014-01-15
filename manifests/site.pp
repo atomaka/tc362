@@ -18,7 +18,7 @@ file { '/home/atomaka/.ssh/authorized_keys':
   owner   => 'atomaka',
   group   => 'atomaka',
   mode    => '0600',
-  content => file('/tmp/puppet/files/keys/atoamka'),
+  content => file('/tmp/puppet/files/keys/atomaka'),
   require => File['/home/atomaka/.ssh'],
 }
 
