@@ -4,21 +4,65 @@
     <meta charset="utf-8">
     <title>Hello World</title>
     <style>
-      h1 {
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
+      html {
+        height: 100%;
+        background: gray;
+      }
 
-        margin: 0;
+      body {
+        width: 500px;
+        min-height: 100%;
 
-        text-align: center;
-        color: white;
+        margin: auto;
+        padding: 5px;
+
         background: black;
+
+        color: white;
+        font-size: 10pt;
+        font-family: "Lucida Console", Monaco, monospace
+      }
+
+      .time {
+        font-weight: bold;
+      }
+      .username {
+        color: green;
+      }
+      .server {
+        color: yellow;
+      }
+      .pwd {
+        color: dodgerblue;
+      }
+      .bad-prompt {
+        color: red;
+      }
+      .good-prompt {
+        color: green;
+      }
+      .cursor {
+        width: 8px;
+        height: 15px;
+        display: inline-block;
+
+        background: white;
       }
     </style>
+    </style>
   </head>
-
   <body>
-    <h1>Hello World!</h1>
+    <div>
+      [<span class="time">16:01:42</span>]
+      <span class="username">atomaka</span>@<span class="server">162.243.226.212</span>
+      <span class="pwd">~</span><br/>
+      |<span class="good-prompt">-&gt;</span> Hello World
+    </div>
+    <div>
+      [<span class="time">16:02:10</span>]
+      <span class="username">atomaka</span>@<span class="server">162.243.226.212</span>
+      <span class="pwd">~</span><br/>
+      |<span class="bad-prompt">-&gt;</span> <span class="cursor">&nbsp;</span>
+    </div>
   </body>
 </html>
