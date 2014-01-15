@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# BOOSTRAP SCRIPT
+# Can take a single param to allow a specific branch to be installed
+BRANCH=$1
+
 # TO BE RUN AS ROOT
 if [[ $(/usr/bin/id -u) -ne 0 ]]; then
   echo "This script must be run as root"
@@ -29,7 +33,13 @@ gem install librarian-puppet
 
 # CLONE PUPPET REPOSITORY
 cd /tmp
+rm -rf puppet
 git clone https://github.com/atomaka/tc362.git puppet
+
+if [ "$BRANCH" != "" ]; then
+  git fetch
+  git checkout $BRANCH
+fi
 
 # INSTALL MODULES
 cd puppet
