@@ -14,7 +14,10 @@ dpkg-reconfigure --frontend noninteractive tzdata
 apt-get upgrade -y && apt-get dist-upgrade -y
 
 # INSTALL GIT
-apt-get install git
+apt-get install git -y
+
+# INSTALL RUBYGEMS
+apt-get install rubygems -y
 
 # INSTALL PUPPET
 wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb
@@ -33,4 +36,4 @@ cd puppet
 librarian-puppet install
 
 # RUN MANIFEST
-puppet manifest apply manifests/site.pp --modulepath=modules/
+puppet apply manifests/site.pp --modulepath=modules/
