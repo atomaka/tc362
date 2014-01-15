@@ -1,0 +1,4 @@
+162.243.226.212
+
+The rest of the week 1 lab assignment can be found in branch
+atomaka/feature/week1 and tagged Week 1.
