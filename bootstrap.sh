@@ -35,6 +35,7 @@ gem install librarian-puppet
 cd /tmp
 rm -rf puppet
 git clone https://github.com/atomaka/tc362.git puppet
+cd puppet
 
 if [ "$BRANCH" != "" ]; then
   git fetch
@@ -42,7 +43,6 @@ if [ "$BRANCH" != "" ]; then
 fi
 
 # INSTALL MODULES
-cd puppet
 librarian-puppet install
 
 # RUN MANIFEST
