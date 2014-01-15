@@ -1,0 +1,20 @@
+FORGE
+  remote: http://forge.puppetlabs.com
+  specs:
+    camptocamp/augeas (0.0.1)
+    puppetlabs/apache (0.10.0)
+      puppetlabs/concat (>= 1.0.0)
+      puppetlabs/stdlib (>= 2.4.0)
+    puppetlabs/concat (1.1.0-rc1)
+      puppetlabs/stdlib (>= 3.0.0)
+    puppetlabs/stdlib (4.1.0)
+    saz/ssh (1.2.0)
+      puppetlabs/stdlib (>= 2.2.1)
+    saz/sudo (2.4.3)
+
+DEPENDENCIES
+  camptocamp/augeas (= 0.0.1)
+  puppetlabs/apache (= 0.10.0)
+  saz/ssh (= 1.2.0)
+  saz/sudo (= 2.4.3)
+
