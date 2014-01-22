@@ -1,6 +1,7 @@
 # USERS
+# atomaka, with SSH key
 user { 'atomaka':
-  ensure     => 'present',
+  ensure     => present,
   groups     => ['sudo'],
   managehome => true,
   shell      => '/bin/zsh',
@@ -21,6 +22,13 @@ file { '/home/atomaka/.ssh/authorized_keys':
   content => file('/tmp/puppet/files/keys/atomaka'),
   require => File['/home/atomaka/.ssh'],
 }
+# jeff, with password
+user { 'jeff':
+  ensure     => present,
+  managehome => true,
+  shell      => '/bin/bash',
+  password   => '$6$.AURF9sE09Q$..S10CFY7G.AVXzSW//w6GoV6yPzBzdvyUl8a7oyYbW/XzBU.o6AdHxTgTkCSWb64zmN3QoKovoUyLJhE/MFP/'
+}
 
 # PACKAGES
 package { 'mosh': }
@@ -38,8 +46,9 @@ class { 'apache': }
 # CONFIGURATIONS
 ssh::server::configline { 'Port': value => '22984' }
 ssh::server::configline { 'PermitRootLogin': value => 'no' }
-ssh::server::configline { 'PasswordAuthentication': value => 'no' }
+ssh::server::configline { 'PasswordAuthentication': value => 'yes' }
 ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
+ssh::server::configline { 'AllowUsers/2': value => 'jeff' }
 
 sudo::conf { 'sudo':
   priority => 10,
