@@ -36,6 +36,7 @@ class { 'ssh::server':
 class { 'apache': }
 
 # CONFIGURATIONS
+ssh::server::configline { 'Port': value => '22984' }
 ssh::server::configline { 'PermitRootLogin': value => 'no' }
 ssh::server::configline { 'PasswordAuthentication': value => 'no' }
 ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
