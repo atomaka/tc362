@@ -90,3 +90,19 @@ file { '/var/www/tc362.atomaka.com/index.html':
   content => file('/tmp/puppet/files/index.html'),
   require => File['/var/www/tc362.atomaka.com'],
 }
+
+file { '/home/atomaka/web':
+  ensure  => link,
+  owner   => 'atomaka',
+  group   => 'atomaka',
+  target  => '/var/www/tc362.atomaka.com',
+  require => [ User['atomaka'], File['/var/www/tc362.atomaka.com'] ],
+}
+
+file { '/home/jeff/web':
+  ensure  => link,
+  owner   => 'jeff',
+  group   => 'jeff',
+  target  => '/var/www/tc362.atomaka.com',
+  require => [ User['jeff'], File['/var/www/tc362.atomaka.com'] ],
+}
