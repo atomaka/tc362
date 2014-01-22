@@ -1,11 +1,16 @@
+# GROUPS
+group { 'web':
+  ensure => present,
+}
+
 # USERS
 # atomaka, with SSH key
 user { 'atomaka':
   ensure     => present,
-  groups     => ['sudo'],
+  groups     => ['sudo', 'web'],
   managehome => true,
   shell      => '/bin/zsh',
-  require    => Package['zsh'],
+  require    => [ Package['zsh'], Group['web'] ]
 }
 file { '/home/atomaka/.ssh':
   ensure  => directory,
@@ -25,9 +30,11 @@ file { '/home/atomaka/.ssh/authorized_keys':
 # jeff, with password
 user { 'jeff':
   ensure     => present,
+  groups     => ['web'],
   managehome => true,
   shell      => '/bin/bash',
-  password   => '$6$.AURF9sE09Q$..S10CFY7G.AVXzSW//w6GoV6yPzBzdvyUl8a7oyYbW/XzBU.o6AdHxTgTkCSWb64zmN3QoKovoUyLJhE/MFP/'
+  password   => '$6$.AURF9sE09Q$..S10CFY7G.AVXzSW//w6GoV6yPzBzdvyUl8a7oyYbW/XzBU.o6AdHxTgTkCSWb64zmN3QoKovoUyLJhE/MFP/',
+  require    => Group['web'],
 }
 
 # PACKAGES
@@ -41,7 +48,10 @@ include sudo
 class { 'ssh::server':
   require => Class['augeas'],
 }
-class { 'apache': }
+
+class { 'apache':
+  default_vhost => false,
+}
 
 # CONFIGURATIONS
 ssh::server::configline { 'Port': value => '22984' }
@@ -55,9 +65,28 @@ sudo::conf { 'sudo':
   content  => "%sudo ALL=(ALL) NOPASSWD: ALL\n",
 }
 
+apache::vhost { 'tc362.atomaka.com':
+  default_vhost => true,
+  port          => '80',
+  docroot       => '/var/www/tc362.atomaka.com',
+  docroot_owner => 'atomaka',
+  docroot_group => 'web',
+}
+
 # FILES
-file { '/var/www/index.html':
-  ensure => present,
+file { '/var/www/tc362.atomaka.com':
+  ensure => directory,
+  owner  => 'atomaka',
+  group  => 'web',
+  mode   => '2775',
+  before => Apache::Vhost['tc362.atomaka.com'],
+}
+
+file { '/var/www/tc362.atomaka.com/index.html':
+  ensure  => present,
+  owner   => 'atomaka',
+  group   => 'web',
+  mode    => '0664',
   content => file('/tmp/puppet/files/index.html'),
-  require => Class['apache'],
+  require => File['/var/www/tc362.atomaka.com'],
 }
