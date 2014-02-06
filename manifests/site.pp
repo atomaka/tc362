@@ -40,6 +40,7 @@ user { 'jeff':
 # PACKAGES
 package { 'mosh': }
 package { 'zsh': }
+package { 'mailutils': }
 
 # CLASSES
 include augeas
@@ -105,4 +106,10 @@ file { '/home/jeff/web':
   group   => 'jeff',
   target  => '/var/www/tc362.atomaka.com',
   require => [ User['jeff'], File['/var/www/tc362.atomaka.com'] ],
+}
+
+file { '/etc/profile':
+  ensure  => present,
+  content => file('/tmp/puppet/files/profile'),
+  require => Package['mailutils'],
 }
