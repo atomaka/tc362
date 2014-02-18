@@ -7,10 +7,15 @@ group { 'web':
 # atomaka, with SSH key
 user { 'atomaka':
   ensure     => present,
-  groups     => ['sudo', 'web'],
+  groups     => ['sudo', 'web', 'maverick', 'iceman'],
   managehome => true,
   shell      => '/bin/zsh',
-  require    => [ Package['zsh'], Group['web'] ]
+  require    => [
+    Package['zsh'],
+    Group['web'],
+    User['maverick'],
+    User['iceman'],
+  ],
 }
 file { '/home/atomaka/.ssh':
   ensure  => directory,
@@ -35,6 +40,15 @@ user { 'jeff':
   shell      => '/bin/bash',
   password   => '$6$.AURF9sE09Q$..S10CFY7G.AVXzSW//w6GoV6yPzBzdvyUl8a7oyYbW/XzBU.o6AdHxTgTkCSWb64zmN3QoKovoUyLJhE/MFP/',
   require    => Group['web'],
+}
+#maverick and iceman, no login
+user { 'maverick':
+  ensure => present,
+  shell  => '/sbin/nologin',
+}
+user { 'iceman':
+  ensure => present,
+  shell  => '/sbin/nologin',
 }
 
 # PACKAGES
@@ -74,6 +88,20 @@ apache::vhost { 'tc362.atomaka.com':
   docroot_group => 'web',
 }
 
+apache::vhost { 'maverick.atomaka.com':
+  port          => '80',
+  docroot       => '/var/www/maverick.atomaka.com',
+  docroot_owner => 'maverick',
+  docroot_group => 'maverick',
+}
+
+apache::vhost { 'iceman.atomaka.com':
+  port          => '80',
+  docroot       => '/var/www/iceman.atomaka.com',
+  docroot_owner => 'iceman',
+  docroot_group => 'iceman',
+}
+
 # FILES
 file { '/var/www/tc362.atomaka.com':
   ensure => directory,
@@ -81,6 +109,36 @@ file { '/var/www/tc362.atomaka.com':
   group  => 'web',
   mode   => '2775',
   before => Apache::Vhost['tc362.atomaka.com'],
+}
+
+file { '/var/www/maverick.atomaka.com':
+  ensure => directory,
+  owner  => 'maverick',
+  group  => 'maverick',
+  mode   => '2775',
+  before => Apache::Vhost['maverick.atomaka.com'],
+}
+
+file { '/var/www/maverick.atomaka.com/index.html':
+  ensure  => present,
+  owner   => 'maverick',
+  group   => 'maverick',
+  content => 'Bullshit! You can be mine.',
+}
+
+file { '/var/www/iceman.atomaka.com':
+  ensure => directory,
+  owner  => 'iceman',
+  group  => 'iceman',
+  mode   => '2775',
+  before => Apache::Vhost['maverick.atomaka.com'],
+}
+
+file { '/var/www/iceman.atomaka.com/index.html':
+  ensure  => present,
+  owner   => 'iceman',
+  group   => 'iceman',
+  content => 'You can be my wingman any time.',
 }
 
 file { '/var/www/tc362.atomaka.com/index.html':
@@ -98,6 +156,22 @@ file { '/home/atomaka/web':
   group   => 'atomaka',
   target  => '/var/www/tc362.atomaka.com',
   require => [ User['atomaka'], File['/var/www/tc362.atomaka.com'] ],
+}
+
+file { '/home/atomaka/maverick':
+  ensure  => link,
+  owner   => 'atomaka',
+  group   => 'atomaka',
+  target  => '/var/www/tc362.atomaka.com',
+  require => [ User['atomaka'], File['/var/www/maverick.atomaka.com'] ],
+}
+
+file { '/home/atomaka/iceman':
+  ensure  => link,
+  owner   => 'atomaka',
+  group   => 'atomaka',
+  target  => '/var/www/iceman.atomaka.com',
+  require => [ User['atomaka'], File['/var/www/iceman.atomaka.com'] ],
 }
 
 file { '/home/jeff/web':
