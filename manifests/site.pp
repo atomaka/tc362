@@ -123,7 +123,14 @@ file { '/var/www/maverick.atomaka.com/index.html':
   ensure  => present,
   owner   => 'maverick',
   group   => 'maverick',
-  content => 'Bullshit! You can be mine.',
+  content => file('/tmp/puppet/files/maverick/index.html'),
+}
+
+file { '/var/www/maverick.atomaka.com/maverick.png':
+  ensure  => present,
+  owner   => 'maverick',
+  group   => 'maverick',
+  content => file('/tmp/puppet/files/maverick/maverick.png'),
 }
 
 file { '/var/www/iceman.atomaka.com':
@@ -138,7 +145,14 @@ file { '/var/www/iceman.atomaka.com/index.html':
   ensure  => present,
   owner   => 'iceman',
   group   => 'iceman',
-  content => 'You can be my wingman any time.',
+  content => file('/tmp/puppet/files/iceman/index.html'),
+}
+
+file { '/var/www/iceman.atomaka.com/iceman.png':
+  ensure  => present,
+  owner   => 'iceman',
+  group   => 'iceman',
+  content => file('/tmp/puppet/files/iceman/iceman.png'),
 }
 
 file { '/var/www/tc362.atomaka.com/index.html':
