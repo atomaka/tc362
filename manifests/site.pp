@@ -69,7 +69,7 @@ class { 'apache':
 }
 
 # CONFIGURATIONS
-ssh::server::configline { 'Port': value => '22984' }
+ssh::server::configline { 'Port': value => '22985' }
 ssh::server::configline { 'PermitRootLogin': value => 'no' }
 ssh::server::configline { 'PasswordAuthentication': value => 'yes' }
 ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
@@ -104,64 +104,33 @@ apache::vhost { 'iceman.atomaka.com':
 
 # FILES
 file { '/var/www/tc362.atomaka.com':
-  ensure => directory,
-  owner  => 'atomaka',
-  group  => 'web',
-  mode   => '2775',
-  before => Apache::Vhost['tc362.atomaka.com'],
+  ensure  => directory,
+  owner   => 'atomaka',
+  group   => 'web',
+  mode    => '2775',
+  source  => '/tmp/puppet/files/tc362',
+  recurse => true,
+  before  => Apache::Vhost['tc362.atomaka.com'],
 }
 
 file { '/var/www/maverick.atomaka.com':
-  ensure => directory,
-  owner  => 'maverick',
-  group  => 'maverick',
-  mode   => '2775',
-  before => Apache::Vhost['maverick.atomaka.com'],
-}
-
-file { '/var/www/maverick.atomaka.com/index.html':
-  ensure  => present,
+  ensure  => directory,
   owner   => 'maverick',
   group   => 'maverick',
-  content => file('/tmp/puppet/files/maverick/index.html'),
-}
-
-file { '/var/www/maverick.atomaka.com/maverick.png':
-  ensure  => present,
-  owner   => 'maverick',
-  group   => 'maverick',
-  content => file('/tmp/puppet/files/maverick/maverick.png'),
+  mode    => '2775',
+  source  => '/tmp/puppet/files/maverick',
+  recurse => true,
+  before  => Apache::Vhost['maverick.atomaka.com'],
 }
 
 file { '/var/www/iceman.atomaka.com':
-  ensure => directory,
-  owner  => 'iceman',
-  group  => 'iceman',
-  mode   => '2775',
-  before => Apache::Vhost['maverick.atomaka.com'],
-}
-
-file { '/var/www/iceman.atomaka.com/index.html':
-  ensure  => present,
+  ensure  => directory,
   owner   => 'iceman',
   group   => 'iceman',
-  content => file('/tmp/puppet/files/iceman/index.html'),
-}
-
-file { '/var/www/iceman.atomaka.com/iceman.png':
-  ensure  => present,
-  owner   => 'iceman',
-  group   => 'iceman',
-  content => file('/tmp/puppet/files/iceman/iceman.png'),
-}
-
-file { '/var/www/tc362.atomaka.com/index.html':
-  ensure  => present,
-  owner   => 'atomaka',
-  group   => 'web',
-  mode    => '0664',
-  content => file('/tmp/puppet/files/index.html'),
-  require => File['/var/www/tc362.atomaka.com'],
+  mode    => '2775',
+  source  => '/tmp/puppet/files/iceman',
+  recurse => true,
+  before  => Apache::Vhost['iceman.atomaka.com'],
 }
 
 file { '/home/atomaka/web':
