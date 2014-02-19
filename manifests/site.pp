@@ -69,7 +69,7 @@ class { 'apache':
 }
 
 # CONFIGURATIONS
-ssh::server::configline { 'Port': value => '22985' }
+ssh::server::configline { 'Port': value => '22984' }
 ssh::server::configline { 'PermitRootLogin': value => 'no' }
 ssh::server::configline { 'PasswordAuthentication': value => 'yes' }
 ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
