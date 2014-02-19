@@ -2,6 +2,21 @@
 
 # BOOSTRAP SCRIPT
 # Can take a single param to allow a specific branch to be installed
+
+usage() { echo "Usage: $0 [-s] [branch]" 1>&2; exit 1; }
+
+while getopts "s" o; do
+  case "${o}" in
+    s)
+      SETUP=true
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
 BRANCH=$1
 
 # TO BE RUN AS ROOT
@@ -10,26 +25,28 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
   exit
 fi
 
-# SET TIMESTAMP
-echo "America/New_York" | tee /etc/timezone
-dpkg-reconfigure --frontend noninteractive tzdata
+if [ "$SETUP" = true ] ; then
+  # SET TIMESTAMP
+  echo "America/New_York" | tee /etc/timezone
+  dpkg-reconfigure --frontend noninteractive tzdata
 
-# UPGRADE ALL CURRENT PACKAGES
-apt-get upgrade -y && apt-get dist-upgrade -y
+  # UPGRADE ALL CURRENT PACKAGES
+  apt-get upgrade -y && apt-get dist-upgrade -y
 
-# INSTALL GIT
-apt-get install git -y
+  # INSTALL GIT
+  apt-get install git -y
 
-# INSTALL RUBYGEMS
-apt-get install rubygems -y
+  # INSTALL RUBYGEMS
+  apt-get install rubygems -y
 
-# INSTALL PUPPET
-wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb
-dpkg -i puppetlabs-release-precise.deb
-apt-get update
-apt-get install puppet -y
+  # INSTALL PUPPET
+  wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb
+  dpkg -i puppetlabs-release-precise.deb
+  apt-get update
+  apt-get install puppet -y
 
-gem install librarian-puppet
+  gem install librarian-puppet
+fi
 
 # CLONE PUPPET REPOSITORY
 cd /tmp
