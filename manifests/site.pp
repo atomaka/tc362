@@ -7,7 +7,7 @@ group { 'web':
 # atomaka, with SSH key
 user { 'atomaka':
   ensure     => present,
-  groups     => ['sudo', 'web', 'maverick', 'iceman'],
+  groups     => ['sudo', 'web', 'maverick', 'iceman', 'wordpress'],
   managehome => true,
   shell      => '/bin/zsh',
   require    => [
@@ -15,6 +15,7 @@ user { 'atomaka':
     Group['web'],
     User['maverick'],
     User['iceman'],
+    User['wordpress'],
   ],
 }
 file { '/home/atomaka/.ssh':
@@ -41,12 +42,16 @@ user { 'jeff':
   password   => '$6$.AURF9sE09Q$..S10CFY7G.AVXzSW//w6GoV6yPzBzdvyUl8a7oyYbW/XzBU.o6AdHxTgTkCSWb64zmN3QoKovoUyLJhE/MFP/',
   require    => Group['web'],
 }
-#maverick and iceman, no login
+#maverick, iceman, and wordpress with no login
 user { 'maverick':
   ensure => present,
   shell  => '/sbin/nologin',
 }
 user { 'iceman':
+  ensure => present,
+  shell  => '/sbin/nologin',
+}
+user { 'wordpress':
   ensure => present,
   shell  => '/sbin/nologin',
 }
@@ -60,12 +65,25 @@ package { 'mailutils': }
 include augeas
 include sudo
 
-class { 'ssh::server':
+class { '::ssh::server':
   require => Class['augeas'],
 }
 
-class { 'apache':
+class { '::apache':
   default_vhost => false,
+  mpm_module    => 'prefork',
+}
+class { '::apache::mod::php': }
+
+class { '::mysql::server': }
+class { '::mysql::bindings':
+  php_enable => true,
+}
+
+class { '::wordpress':
+  wp_owner    => 'root',
+  wp_group    => 'wordpress',
+  install_dir => '/var/www/wordpress.atomaka.com',
 }
 
 # CONFIGURATIONS
@@ -87,19 +105,23 @@ apache::vhost { 'tc362.atomaka.com':
   docroot_owner => 'atomaka',
   docroot_group => 'web',
 }
-
 apache::vhost { 'maverick.atomaka.com':
   port          => '80',
   docroot       => '/var/www/maverick.atomaka.com',
   docroot_owner => 'maverick',
   docroot_group => 'maverick',
 }
-
 apache::vhost { 'iceman.atomaka.com':
   port          => '80',
   docroot       => '/var/www/iceman.atomaka.com',
   docroot_owner => 'iceman',
   docroot_group => 'iceman',
+}
+apache::vhost { 'wordpress.atomaka.com':
+  port          => '80',
+  docroot       => '/var/www/wordpress.atomaka.com',
+  docroot_owner => 'wordpress',
+  docroot_group => 'wordpress',
 }
 
 # FILES
@@ -112,7 +134,6 @@ file { '/var/www/tc362.atomaka.com':
   recurse => true,
   before  => Apache::Vhost['tc362.atomaka.com'],
 }
-
 file { '/var/www/maverick.atomaka.com':
   ensure  => directory,
   owner   => 'maverick',
@@ -122,7 +143,6 @@ file { '/var/www/maverick.atomaka.com':
   recurse => true,
   before  => Apache::Vhost['maverick.atomaka.com'],
 }
-
 file { '/var/www/iceman.atomaka.com':
   ensure  => directory,
   owner   => 'iceman',
@@ -140,7 +160,6 @@ file { '/home/atomaka/web':
   target  => '/var/www/tc362.atomaka.com',
   require => [ User['atomaka'], File['/var/www/tc362.atomaka.com'] ],
 }
-
 file { '/home/atomaka/maverick':
   ensure  => link,
   owner   => 'atomaka',
@@ -148,13 +167,19 @@ file { '/home/atomaka/maverick':
   target  => '/var/www/maverick.atomaka.com',
   require => [ User['atomaka'], File['/var/www/maverick.atomaka.com'] ],
 }
-
 file { '/home/atomaka/iceman':
   ensure  => link,
   owner   => 'atomaka',
   group   => 'atomaka',
   target  => '/var/www/iceman.atomaka.com',
   require => [ User['atomaka'], File['/var/www/iceman.atomaka.com'] ],
+}
+file { '/home/atomaka/wordpress':
+  ensure  => link,
+  owner   => 'atomaka',
+  group   => 'atomaka',
+  target  => '/var/www/wordpress.atomaka.com',
+  require => [ User['atomaka'], File['/var/www/wordpress.atomaka.com'] ],
 }
 
 file { '/home/jeff/web':
