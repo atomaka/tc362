@@ -26,6 +26,11 @@ if [[ $(/usr/bin/id -u) -ne 0 ]]; then
 fi
 
 if [ "$SETUP" = true ] ; then
+  # SWAPFILE
+  dd if=/dev/zero of=/swapfile bs=1024 count=512k
+  mkswap /swapfile
+  swapon /swapfile
+
   # SET TIMESTAMP
   echo "America/New_York" | tee /etc/timezone
   dpkg-reconfigure --frontend noninteractive tzdata
