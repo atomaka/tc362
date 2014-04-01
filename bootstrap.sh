@@ -39,7 +39,7 @@ if [ "$SETUP" = true ] ; then
   dpkg-reconfigure --frontend noninteractive tzdata
 
   # UPGRADE ALL CURRENT PACKAGES
-  apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
+  apt-get update && apt-get upgrade -y
 
   # INSTALL GIT
   apt-get install git -y
