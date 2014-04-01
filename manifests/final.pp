@@ -26,7 +26,8 @@ class { '::mysql::server': }
 # page)
 # You may use any Rails deployment that works with Nginx
 
-# IN PROGRESS
+# install nginx
+class { 'nginx': }
 
 # A working firewall using iptables or another Linux firewall
 resources { 'firewall':
