@@ -65,8 +65,21 @@ package { 'mailutils': }
 include augeas
 include sudo
 
+ssh::server::configline { 'Port': value => '22984' }
+ssh::server::configline { 'PermitRootLogin': value => 'no' }
+ssh::server::configline { 'PasswordAuthentication': value => 'yes' }
+ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
+ssh::server::configline { 'AllowUsers/2': value => 'jeff' }
+
 class { '::ssh::server':
-  require => Class['augeas'],
+  storeconfigs_enabled       => false,
+  options                    => {
+    'Port'                   => [22984],
+    'PermitRootLogin'        => 'no',
+    'PasswordAuthentication' => 'yes',
+    'AllowUsers/1'           => 'atomaka',
+    'AllowUsers/2'           => 'jeff',
+  },
 }
 
 class { '::apache':
@@ -87,12 +100,6 @@ class { '::wordpress':
 }
 
 # CONFIGURATIONS
-ssh::server::configline { 'Port': value => '22984' }
-ssh::server::configline { 'PermitRootLogin': value => 'no' }
-ssh::server::configline { 'PasswordAuthentication': value => 'yes' }
-ssh::server::configline { 'AllowUsers/1': value => 'atomaka' }
-ssh::server::configline { 'AllowUsers/2': value => 'jeff' }
-
 sudo::conf { 'sudo':
   priority => 10,
   content  => "%sudo ALL=(ALL) NOPASSWD: ALL\n",

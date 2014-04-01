@@ -8,15 +8,15 @@ user { 'jeff':
   password   => '$6$.AURF9sE09Q$..S10CFY7G.AVXzSW//w6GoV6yPzBzdvyUl8a7oyYbW/XzBU.o6AdHxTgTkCSWb64zmN3QoKovoUyLJhE/MFP/',
 }
 
-# Logging in with the root user must be disabled
-include augeas
 class { '::ssh::server':
-  require => Class['augeas'],
+  storeconfigs_enabled => false,
+  options              => {
+    # Logging in with the root user must be disabled
+    'PermitRootLogin'  => 'no',
+    # SSH must be enabled on a non-standard port
+    'Port'             => [22984],
+  },
 }
-ssh::server::configline { 'PermitRootLogin': value => 'no' }
-
-# SSH must be enabled on a non-standard port
-ssh::server::configline { 'Port': value => '22984' }
 
 # Install a working MySQL server
 class { '::mysql::server': }
