@@ -3,12 +3,15 @@
 # BOOSTRAP SCRIPT
 # Can take a single param to allow a specific branch to be installed
 
-usage() { echo "Usage: $0 [-s] [branch]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s] [-m MANIFEST_FILE] [BRANCH]" 1>&2; exit 1; }
 
-while getopts "s" o; do
+while getopts "sm:" o; do
   case "${o}" in
     s)
       SETUP=true
+      ;;
+    m)
+      MANIFEST=${OPTARG}
       ;;
     *)
       usage
@@ -68,4 +71,4 @@ fi
 librarian-puppet install
 
 # RUN MANIFEST
-puppet apply manifests/site.pp --modulepath=modules/
+puppet apply manifests/$MANIFEST --modulepath=modules/
