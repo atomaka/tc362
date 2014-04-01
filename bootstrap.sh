@@ -44,6 +44,11 @@ if [ "$SETUP" = true ] ; then
   # INSTALL GIT
   apt-get install git -y
 
+  # INSTALL RUBY 1.9.3 (for rails)
+  apt-get install ruby1.9.3 -y
+  update-alternatives --set ruby /usr/bin/ruby1.9.1
+  update-alternatives --set gem /usr/bin/gem1.9.1
+
   # INSTALL RUBYGEMS
   apt-get install rubygems -y
 
