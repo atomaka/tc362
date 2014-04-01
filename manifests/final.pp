@@ -29,6 +29,54 @@ class { '::mysql::server': }
 # install nginx
 class { 'nginx': }
 
+# install rails
+package { 'rails':
+  provider => 'gem',
+}
+
+# add rails depends
+package { ['libsqlite3-dev', 'build-essential', 'nodejs']:
+  before => Exec['install rails app']
+}
+
+# add rails user and application
+user { 'rails':
+  ensure     => present,
+  groups     => ['sudo'],
+  managehome => true,
+  shell      => '/bin/bash',
+}
+exec { 'create rails app':
+  command     => 'rails new welcome',
+  user        => 'rails',
+  environment => ['HOME=/home/rails'],
+  path        => '/usr/bin:/usr/local/bin',
+  cwd         => '/home/rails',
+  creates     => '/home/rails/welcome',
+  require     => [
+    Package['rails'],
+    User['rails'],
+  ],
+}
+exec { 'install rails app':
+  command     => 'bundle install --path vendor/bundle',
+  user        => 'rails',
+  environment => ['HOME=/home/rails'],
+  path        => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
+  cwd         => '/home/rails/welcome',
+  unless      => 'bundle check',
+  require     => Exec['create rails app'],
+  notify      => Exec['start rails app'],
+}
+exec { 'start rails app':
+  command     => 'rails server -d',
+  user        => 'rails',
+  environment => ['HOME=/home/rails'],
+  path        => '/usr/bin:/usr/local/bin',
+  cwd         => '/home/rails/welcome',
+  refreshonly => true,
+}
+
 # A working firewall using iptables or another Linux firewall
 resources { 'firewall':
   purge => true,
