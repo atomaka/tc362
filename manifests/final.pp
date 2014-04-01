@@ -29,6 +29,14 @@ class { '::mysql::server': }
 # install nginx
 class { 'nginx': }
 
+# configure nginx proxy
+nginx::resource::upstream { 'welcome_app':
+  members => ['localhost:3000'],
+}
+nginx::resource::vhost { 'final.atomaka.com':
+  proxy => 'http://welcome_app',
+}
+
 # install rails
 package { 'rails':
   provider => 'gem',
