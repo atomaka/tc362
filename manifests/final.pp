@@ -81,11 +81,23 @@ exec { 'start rails app':
 resources { 'firewall':
   purge => true,
 }
-class { '::firewall': }
+class { '::firewall':
+  require => Class['::ssh::server'],
+}
 firewall { '000 accept all icmp':
   proto  => 'icmp',
   action => 'accept',
 } ->
+firewall { '001 accept all to lo interface':
+  proto   => 'all',
+  iniface => 'lo',
+  action  => 'accept',
+}->
+firewall { '002 accept related established rules':
+  proto   => 'all',
+  state   => ['RELATED', 'ESTABLISHED'],
+  action  => 'accept',
+}->
 firewall { '100 accept ssh (non-default port)':
   proto  => 'tcp',
   dport  => '22984',
@@ -95,7 +107,8 @@ firewall { '200 accept http':
   proto  => 'tcp',
   dport  => '80',
   action => 'accept',
-} ->
+}
+
 firewall { '999 drop all':
   proto  => 'all',
   action => 'drop',
