@@ -3,12 +3,15 @@
 # BOOSTRAP SCRIPT
 # Can take a single param to allow a specific branch to be installed
 
-usage() { echo "Usage: $0 [-s] [branch]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-s] [-m MANIFEST_FILE] [BRANCH]" 1>&2; exit 1; }
 
-while getopts "s" o; do
+while getopts "sm:" o; do
   case "${o}" in
     s)
       SETUP=true
+      ;;
+    m)
+      MANIFEST=${OPTARG}
       ;;
     *)
       usage
@@ -36,10 +39,15 @@ if [ "$SETUP" = true ] ; then
   dpkg-reconfigure --frontend noninteractive tzdata
 
   # UPGRADE ALL CURRENT PACKAGES
-  apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
+  apt-get update && apt-get upgrade -y
 
   # INSTALL GIT
   apt-get install git -y
+
+  # INSTALL RUBY 1.9.3 (for rails)
+  apt-get install ruby1.9.3 -y
+  update-alternatives --set ruby /usr/bin/ruby1.9.1
+  update-alternatives --set gem /usr/bin/gem1.9.1
 
   # INSTALL RUBYGEMS
   apt-get install rubygems -y
@@ -68,4 +76,4 @@ fi
 librarian-puppet install
 
 # RUN MANIFEST
-puppet apply manifests/site.pp --modulepath=modules/
+puppet apply manifests/$MANIFEST --modulepath=modules/
